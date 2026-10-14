@@ -170,9 +170,9 @@ Phase 5. Operator-facing question bank management and learning analytics after W
 
 ### Wave C — issuer path (ops before UI)
 
-Phase 3 / 5. Contract `mintCredentialWithAuthorization` and Lookup/vault display of attested records already ship; learner mint today is claimed-only.
+Phase 3 / 5. Contract `mintCredentialWithAuthorization` and Lookup/vault display of attested records already ship. The contract owner can sign an authorization from the issuer pane. Learner mint stays claimed-only, and that pane does not submit the signature.
 
-1. Issuer key custody and dashboard (signing keys never in the learner browser).
+1. Issuer signing pane — shipped. The owner wallet signs. The signing key stays in the wallet. The signature does not mint and does not replace the current token.
 2. Attested mint in the learner UI (submit owner authorization — not the default claimed button).
 3. Revocation and versioning (product + contract; not in freeze v1).
 

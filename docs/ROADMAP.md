@@ -38,7 +38,7 @@ Remaining: optional further lesson tracks or labs beyond Wave A; then **Wave B**
 
 Shipped: credential model, soulbound metadata, claimed vs attested, owner-signed attested mint on the contract, shareable credential URL/QR and in-product Lookup.
 
-Remaining (**Wave C** — ops before UI): (1) issuer-key custody and dashboard, (2) attested mint in the learner UI, (3) versioning and revocation. Contract attested mint already ships; learner mint stays claimed-only until Wave C. See [Flowchart](./FLOWCHART.md) Wave C.
+Remaining (**Wave C**): attested mint in the learner UI, then versioning and revocation. The contract owner can sign an authorization from the issuer pane. That signature does not mint, and learner mint stays claimed-only. See [Flowchart](./FLOWCHART.md) Wave C.
 
 ## Phase 4 — Gamification ✅ *Live ranking*
 
@@ -50,7 +50,7 @@ Remaining: keep honesty clear that rank is not issuer-attested and not on-chain 
 
 Shipped: learner accounts persist progress, quiz state, and puzzle state beyond a single browser. Wallets link to the account without becoming the account. A non-empty wallet-local snapshot replaces the account copy on link. Clients cannot write XP or rank.
 
-Remaining: **Wave B** — question management and learning analytics (Wave A shipped); **Wave C** — issuer dashboard (with Phase 3); production monitoring (feeds **Wave D**). See [Flowchart](./FLOWCHART.md).
+Remaining: **Wave B** — question management and learning analytics (Wave A shipped); **Wave C** — attested mint in the learner UI (the owner signing pane already ships); production monitoring (feeds **Wave D**). See [Flowchart](./FLOWCHART.md).
 
 ## Phase 6 — Security & Launch
 

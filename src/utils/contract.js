@@ -77,6 +77,13 @@ export const CREDENTIAL_ABI = [
     stateMutability: "view",
     type: "function",
   },
+  {
+    inputs: [{ name: "learner", type: "address" }],
+    name: "authorizationNonces",
+    outputs: [{ name: "", type: "uint256" }],
+    stateMutability: "view",
+    type: "function",
+  },
 ];
 
 export const CONTRACT_ADDRESS = parseContractAddress(readPublicEnv("VITE_CREDENTIAL_CONTRACT"));

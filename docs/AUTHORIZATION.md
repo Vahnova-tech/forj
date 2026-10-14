@@ -41,6 +41,6 @@ Product copy must keep **claimed** and **attested** distinct. See [Credential](.
 
 ## Relationship to the learner app
 
-Learning, XP, and the puzzle can happen before a wallet is connected. Attestation only applies when an issuer chooses to sign and a mint uses that signature. Signing keys never live in the learner browser. Wallet addresses, the credential contract, and mint scores are checked in the app before a transaction is sent. Until then, any minted record from the learner flow remains claimed.
+Learning, XP, and the puzzle can happen before a wallet is connected. Attestation only applies when an issuer chooses to sign and a mint uses that signature. Signing keys never live in the learner browser. The contract owner can open an issuer pane, review a learner snapshot, and sign that authorization with their wallet. The pane shows the signature for copy. It does not mint, and it does not replace the current token. The learner flow still cannot submit the signature. Wallet addresses, the credential contract, and mint scores are checked in the app before a transaction is sent. Any minted record from the learner flow remains claimed.
 
-Issuer organizations, dashboards, and revocation are planned. They do not change the meaning of a claimed score.
+Issuer organizations, attested mint in the learner flow, and revocation are planned. They do not change the meaning of a claimed score.

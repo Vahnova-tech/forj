@@ -14,6 +14,14 @@ import {
   eip712TypeHash,
   imageHashFromUri,
 } from "../src/utils/eip712Authorization.js";
+import {
+  AUTHORIZATION_WINDOW_SECONDS,
+  buildIssuerAuthorization,
+  defaultAuthorizationDeadline,
+  formatAuthorizationPackage,
+  snapshotFromCredential,
+  validateAuthorizationDeadline,
+} from "../src/utils/issuerAuthorization.js";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const sol = readFileSync(join(root, "contracts/SkillForgeCredential.sol"), "utf8");
@@ -90,5 +98,76 @@ assert.match(sol, /_mint\(learner, tokenId\)/);
 assert.equal(sol.includes("_safeMint"), false);
 assert.match(docs, /seven days/);
 assert.match(docs, /per-learner nonce/);
+assert.match(docs, /issuer pane/);
+assert.match(docs, /does not mint/);
+
+const issuerPage = readFileSync(join(root, "src/components/pages/IssuerPage.jsx"), "utf8");
+const issuerHelper = readFileSync(join(root, "src/utils/issuerAuthorization.js"), "utf8");
+assert.equal(issuerPage.includes("mintCredentialWithAuthorization"), false);
+assert.equal(issuerHelper.includes("mintCredentialWithAuthorization"), false);
+assert.equal(issuerPage.includes("sendTransaction"), false);
+assert.equal(issuerHelper.includes("sendTransaction"), false);
+assert.equal(issuerHelper.includes("writeContract"), false);
+assert.equal(/privateKey|PRIVATE_KEY|mnemonic/i.test(issuerPage), false);
+assert.match(issuerPage, /signTypedData/);
+
+const now = 1_700_000_000;
+const owner = "0x0000000000000000000000000000000000000002";
+const learner = "0x0000000000000000000000000000000000000001";
+const contract = "0x3756be4955530Bba0844C4D2EcF35DB5ed7d90df";
+const built = buildIssuerAuthorization({
+  learner,
+  owner,
+  signer: owner,
+  totalPoints: 15,
+  puzzleMask: 1,
+  easyCorrect: 5,
+  mediumCorrect: 0,
+  hardCorrect: 0,
+  imageData: "",
+  nonce: 0,
+  deadline: now + 3600,
+  verifyingContract: contract,
+  nowSeconds: now,
+});
+assert.equal(built.ok, true);
+assert.equal(built.domain.name, EIP712_NAME);
+assert.equal(built.domain.version, EIP712_VERSION);
+assert.equal(built.domain.chainId, 43113);
+assert.equal(built.domain.verifyingContract, contract);
+assert.equal(built.primaryType, EIP712_PRIMARY_TYPE);
+assert.equal(built.message.learner, learner);
+assert.equal(built.message.imageHash, imageHashFromUri(""));
+assert.equal(built.authorization.nonce, "0");
+assert.equal(built.message.deadline, 1700003600n);
+const packed = formatAuthorizationPackage(built.authorization, "0x" + "ab".repeat(65));
+assert.match(packed, /"signature": "0xabab/);
+assert.equal(JSON.parse(packed).learner, learner);
+
+assert.equal(buildIssuerAuthorization({
+  learner,
+  owner,
+  signer: learner,
+  totalPoints: 15,
+  puzzleMask: 1,
+  easyCorrect: 5,
+  mediumCorrect: 0,
+  hardCorrect: 0,
+  nonce: 0,
+  deadline: now + 3600,
+  verifyingContract: contract,
+  nowSeconds: now,
+}).ok, false);
+
+assert.equal(validateAuthorizationDeadline(now + AUTHORIZATION_WINDOW_SECONDS + 1, now).ok, false);
+assert.equal(validateAuthorizationDeadline(now, now).ok, false);
+assert.equal(validateAuthorizationDeadline(now + 60, now).ok, true);
+assert.equal(defaultAuthorizationDeadline(now), now + 24 * 60 * 60);
+assert.equal(snapshotFromCredential(null), null);
+assert.equal(snapshotFromCredential({
+  score: { totalPoints: 15, easyCorrect: 5, mediumCorrect: 0, hardCorrect: 0 },
+  puzzleMask: "1",
+  image: "ipfs://art",
+}).totalPoints, "15");
 
 console.log("EIP-712 authorization model tests passed");

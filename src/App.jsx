@@ -15,6 +15,7 @@ import EmptyState from "./components/EmptyState";
 import AboutPage from "./components/pages/AboutPage";
 import SettingsPage from "./components/pages/SettingsPage";
 import OpsPage from "./components/pages/OpsPage";
+import IssuerPage from "./components/pages/IssuerPage";
 import ProgressPage from "./components/pages/ProgressPage";
 import LearnPage from "./components/pages/LearnPage";
 import LeaderboardPage from "./components/pages/LeaderboardPage";
@@ -49,6 +50,8 @@ import { writeQuizProgress } from "./utils/backend/progressSync";
 import { normalizeAddress } from "./utils/progress";
 import { isOperator } from "./utils/rtdb/operators";
 import { hydratePublishedBanks } from "./utils/rtdb/questionBank";
+import { getFujiPublicClient } from "./utils/fujiClient";
+import { readContractOwner, sameWallet } from "./utils/issuerAuthorization";
 
 const VIEWS = PROGRESS_VIEWS;
 const PUBLIC_PAGES = new Set([
@@ -112,6 +115,7 @@ function App() {
   const [progressRevision, setProgressRevision] = useState(0);
   const [walletLinkError, setWalletLinkError] = useState("");
   const [opsAllowed, setOpsAllowed] = useState(false);
+  const [issuerAllowed, setIssuerAllowed] = useState(false);
   const authActionHandled = useRef(false);
   const walletAdoptedFor = useRef(null);
   const userImage = forgeCertificate;
@@ -201,6 +205,25 @@ function App() {
       cancelled = true;
     };
   }, [isAuthenticated, ownerId]);
+
+  useEffect(() => {
+    const address = wallet.address;
+    if (!address) {
+      setIssuerAllowed(false);
+      return undefined;
+    }
+    let cancelled = false;
+    readContractOwner(getFujiPublicClient())
+      .then((owner) => {
+        if (!cancelled) setIssuerAllowed(sameWallet(owner, address));
+      })
+      .catch(() => {
+        if (!cancelled) setIssuerAllowed(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [wallet.address]);
 
   useEffect(() => {
     if (!progressReady) return;
@@ -736,6 +759,8 @@ function App() {
           onUpdateProfile={auth.updateProfile}
           showOps={opsAllowed}
           onOpenOps={() => setPage("ops")}
+          showIssuer={issuerAllowed}
+          onOpenIssuer={() => setPage("issuer")}
         />
       );
     }
@@ -753,6 +778,26 @@ function App() {
       return (
         <OpsPage
           uid={ownerId}
+          onBack={() => setPage("settings")}
+        />
+      );
+    }
+    if (page === "issuer") {
+      if (!issuerAllowed) {
+        return (
+          <EmptyState
+            title="Issuer locked"
+            body="This signing surface is only available to the credential contract owner wallet."
+            actionLabel="Back to settings"
+            onAction={() => setPage("settings")}
+          />
+        );
+      }
+      return (
+        <IssuerPage
+          signerAddress={wallet.address}
+          getWalletClient={wallet.getWalletClient}
+          switchToFuji={wallet.switchToFuji}
           onBack={() => setPage("settings")}
         />
       );

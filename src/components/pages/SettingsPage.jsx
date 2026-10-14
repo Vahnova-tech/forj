@@ -77,6 +77,8 @@ function SettingsPage({
   onUpdateProfile,
   showOps = false,
   onOpenOps,
+  showIssuer = false,
+  onOpenIssuer,
 }) {
   const fileRef = useRef(null);
   const [name, setName] = useState(account?.name || "");
@@ -399,6 +401,16 @@ function SettingsPage({
           ) : null}
         </div>
       </Card>
+
+      {showIssuer && onOpenIssuer ? (
+        <Card className="settings-block">
+          <h2>Issuer</h2>
+          <p>
+            Sign a Fuji authorization with the contract owner wallet. This does not mint, and it does not turn a Forjora claimed score into an issuer-attested credential.
+          </p>
+          <Button onClick={onOpenIssuer}>Open issuer</Button>
+        </Card>
+      ) : null}
 
       {showOps && onOpenOps ? (
         <Card className="settings-block">

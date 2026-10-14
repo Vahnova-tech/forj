@@ -4151,7 +4151,8 @@ img {
   color: var(--muted);
 }
 
-.auth-field input {
+.auth-field input,
+.auth-field textarea {
   font: inherit;
   text-transform: none;
   letter-spacing: 0;
@@ -4160,6 +4161,16 @@ img {
   background: var(--bg);
   min-height: 44px;
   padding: 10px 12px;
+}
+
+.issuer-package {
+  width: 100%;
+  min-height: 220px;
+  resize: vertical;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 13px;
+  letter-spacing: 0;
+  text-transform: none;
 }
 
 .auth-legal,

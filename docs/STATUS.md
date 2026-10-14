@@ -1,6 +1,6 @@
 # Forjora — Status
 
-Last updated: 5 October 2026
+Last updated: 13 October 2026
 
 This is the shipped product today, against the [roadmap](./ROADMAP.md).
 
@@ -80,7 +80,7 @@ Tagged by extension wave — see [Flowchart](./FLOWCHART.md) §6 and [Roadmap](.
 
 - **Wave A** — shipped: Nodes & Validators lesson-only track; ICM messaging lab (no fourth seating quiz)
 - **Wave B** — Remainder of question-bank operations and learning analytics dashboards. A partial operator surface can already publish questions and summarize learning events.
-- **Wave C** — Forjora Issuer dashboard and key custody; attested mint in the learner UI; credential revocation and versioning
+- **Wave C** — Attested mint in the learner UI, plus revocation and versioning. The contract owner can already sign an authorization from the issuer pane; that signature does not mint, and the learner flow cannot submit it.
 - **Wave D** — Independent review of freeze v1, production monitoring, and Avalanche C-Chain issuance (the production readiness gate stays closed; launch validation is not public-launch approval; see [Security & Launch](./ROADMAP.md))
 - **Wave E** — Partners, collections, third-party verification of attested credentials (after Wave D)
 - **Agentic extension** — Learner-progression agent, a language model, tool use, outcome tracking, and MCP servers. None of this is in the product. The [architecture](./ARCHITECTURE.md) separates that plan from the shipped loop. An “AI Builder” badge is a skill ladder for builder-tooling progress, not an agent.

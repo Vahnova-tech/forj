@@ -1,6 +1,6 @@
 # Forjora — Architecture
 
-Last updated: 5 October 2026
+Last updated: 13 October 2026
 
 This is the system map for reviewers. It states what Forjora does today, what is only partly built, and what a later learner-progression agent and MCP layer are intended to do.
 
@@ -62,13 +62,13 @@ flowchart TB
 | Learner progression | **Implemented / Current** | One event stream updates path state, XP, levels, achievements, streaks, puzzle history, and credential flags | Derived from allowed learning events. It is a learning record, not an exam and not an on-chain credential. |
 | Assessment and quiz | **Implemented / Current** | Foundation, Builder, Advanced, and Mastery challenges. Explanations and official Avalanche references appear after submit. | Easy, Medium, and Hard seat puzzle pieces. Mastery deepens knowledge and does not change the frozen Fuji score scale. |
 | Points, XP, levels, badges, streaks | **Implemented / Current** | Points spend on that quiz’s pieces. XP, levels, badges, and UTC streaks come from first-time completions. | Retries replace a section score. They do not farm XP, fragments, or standing. |
-| Credential generation and verification | **Implemented / Current** for claimed mint and public Lookup. Issuer-attested mint is **Implemented / Current** on the contract and **Planned / Future** in the learner flow. | Soulbound Fuji record, share URL, and QR. Lookup shows the minted snapshot. | A claimed record means the learner published their scores. An issuer-attested record means the contract owner authorized that snapshot. Lookup proves the token exists. |
+| Credential generation and verification | **Implemented / Current** for claimed mint, public Lookup, and owner-wallet authorization signing. Issuer-attested mint is **Implemented / Current** on the contract and **Planned / Future** in the learner flow. | Soulbound Fuji record, share URL, and QR. The issuer pane signs an authorization and does not submit it. Lookup shows the minted snapshot. | A claimed record means the learner published their scores. An issuer-attested record means the contract owner authorized that snapshot. A signature alone does not change the token. Lookup proves the token exists. |
 | Data layer | **Implemented / Current** for account progress and events. Several reserved collections are closed. | See [§7](#7-data-architecture). | Learner progress stays off-chain. The chain stores the minted snapshot only. |
 | Operator question and analytics surface | **Prototype / In development** | Operators flagged for the project can publish question overlays and see a funnel of learning events. | Does not change seating math, attestation, or the learner’s next step. |
 | AI / agent layer | **Planned / Future** | A later Learner Progression Agent would recommend from stored context. | It does not exist. Path order is the current “next” behavior. |
 | Blockchain layer | **Implemented / Current** on Avalanche Fuji. C-Chain issuance is **Planned / Future** and the production gate is closed. | Soulbound credential contract. | App XP is not the credential. Forjora does not issue credentials on Avalanche C-Chain today. |
 | External integrations | **Implemented / Current** | Identity provider, account database, Fuji network reads and wallet transactions, explorer links, artwork URIs, official Avalanche lesson references. | Public chain reads show presence. They do not upgrade a claimed score. |
-| Authentication and authorization | **Implemented / Current** for learners. Issuer operations and role dashboards are **Planned / Future**. | Email or Google account; verified email before account-backed progress; optional wallet. | See [§10](#10-security-and-privacy). |
+| Authentication and authorization | **Implemented / Current** for learners and for the contract-owner signing pane. Organization roles and issuer dashboards beyond that wallet signature are **Planned / Future**. | Email or Google account; verified email before account-backed progress; optional wallet. The issuer pane opens only when the connected wallet is the contract owner. | See [§10](#10-security-and-privacy). |
 | Analytics | **Prototype / In development** | Best-effort learning events without profile secrets, plus an operator funnel. | Not a learner-facing analytics product, and not agent evaluation. |
 
 ### Learner interface
@@ -150,7 +150,7 @@ Skill ladders run Explorer → Builder → Practitioner → Specialist → Maste
 
 ### Credential generation and verification
 
-**Implementation status:** claimed mint, vault, share URL, QR, and Lookup are **Implemented / Current**. Issuer signature verification is **Implemented / Current** on the contract. Issuer operations, attested mint in the learner flow, revocation, and versioning are **Planned / Future**.
+**Implementation status:** claimed mint, vault, share URL, QR, Lookup, and the owner signing pane are **Implemented / Current**. Issuer signature verification is **Implemented / Current** on the contract. Attested mint in the learner flow, revocation, and versioning are **Planned / Future**. The signing pane does not submit a mint.
 
 Two meanings stay separate:
 
@@ -567,7 +567,7 @@ The full threat model for the shipped Fuji product is in the review pack (`audit
 | Learner | What to open, when to retry, whether to show on the Board, whether to link a wallet, whether to confirm a claimed mint. |
 | Guest | Browse Learn, Board, and Lookup without an account. |
 | Wallet holder | Confirms the network and the transaction. The app cannot mint silently. |
-| Contract owner | Signs an issuer-attested authorization off to the side of the learner flow, or hands the issuer role to a new owner who must accept it. There is no issuer dashboard. |
+| Contract owner | Signs an issuer-attested authorization from the issuer pane with their wallet, or hands the issuer role to a new owner who must accept it. The signing key stays in the wallet. The signature does not mint. |
 | Operator | If flagged for the project, can publish question overlays and view an analytics funnel. This is a prototype surface, not a mentor review queue. |
 | Reviewer of the freeze pack | Independent review of the credential source is still outstanding. It is not an in-product role. |
 
@@ -823,7 +823,7 @@ This sequence is the agentic extension. It does not replace product phases 1–7
 
 **Implementation status:** **Implemented / Current**, with the partial items already named in [Status](./STATUS.md).
 
-The existing platform: account, eight-track path, assessment, progression, puzzle, claimed Fuji credential, Lookup, community ranking, and direct service integrations. Path order is the next-activity rule. Issuer-attested mint exists on the contract and is not the learner default.
+The existing platform: account, eight-track path, assessment, progression, puzzle, claimed Fuji credential, Lookup, community ranking, owner authorization signing, and direct service integrations. Path order is the next-activity rule. Issuer-attested mint exists on the contract and is not the learner default. The owner signature does not itself mint.
 
 ### Phase 2 — Agent
 
